@@ -13,5 +13,5 @@ client.on('data', (data) => {
 
 // 当和服务端成功建立连接之后，向服务端写数据
 client.on('connect', () => {
-    client.write('你好服务器')
+    client.write('GET /username HTTP1.1\nhost:127.0.0.1\ncontent-type:utf-8')
 })

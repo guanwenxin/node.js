@@ -1,4 +1,7 @@
 const http = require('http')
+const path = require('node:path')
+const fs = require('node:fs')
+const { saveFile } = require('./util')
 
 const port = 3000;
 const host = '127.0.0.1'
@@ -19,6 +22,19 @@ const router = [
             console.log(query)
             res.end(JSON.stringify(query))
          }
+        },
+        {
+            path: '/upload',
+            handler: (res, query, req) => {
+                // 将客户端上传的文件保存至本地
+                const filename = query?.filename || 'not'
+                const canWrite = saveFile(filename)
+                // req.pipe(canWrite)
+                req.on('data', (chunk) => {
+                    console.log(chunk.toString('utf-8'))
+                })
+                res.end('保存成功')
+            }
     }
 ]
 // 2.查询参数的解析
@@ -38,7 +54,7 @@ const server = http.createServer((req, res) => {
     // 路由逻辑
     router.forEach(route => {
         if (inComePath === route.path) {
-            route.handler(res, queryPair)
+            route.handler(res, queryPair, req)
         }
     })
 })
